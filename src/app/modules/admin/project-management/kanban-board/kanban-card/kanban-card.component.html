@@ -1,0 +1,19 @@
+<a
+  class="flex flex-col items-start mb-3 p-5 space-y-3 shadow rounded-lg overflow-hidden bg-card"
+  [routerLink]="'/admin/thinq/' + card.AppDataId"
+  cdkDrag
+>
+  <!-- Title -->
+  <div class="text-sm text-accent-600 font-medium leading-5">
+    {{ card.Project }}
+  </div>
+  <!-- Description -->
+  <div
+    class="w-full overflow-hidden text-base font-medium leading-5 card-content"
+  >
+    {{ card.Description }}
+  </div>
+  <div class="flex w-full justify-end font-semibold text-primary-600">
+    {{ card.AssignedToName }}
+  </div>
+</a>

@@ -1,0 +1,24 @@
+<a
+  class="flex flex-col flex-auto p-6 bg-card shadow-md rounded-2xl overflow-hidden cursor-pointer hover:shadow-xl"
+  [routerLink]="navigateLink"
+>
+  <div class="flex items-start justify-between">
+    <div
+      class="text-lg font-medium tracking-tight leading-6 truncate"
+      [ngClass]="titleClass"
+    >
+      {{ title }}
+    </div>
+  </div>
+  <div class="flex flex-col items-center mt-2">
+    <div
+      class="text-7xl sm:text-8xl font-bold tracking-tight leading-none"
+      [ngClass]="subTitleClass"
+    >
+      {{ subTitle }}
+    </div>
+    <div class="text-lg font-medium" [ngClass]="descriptionClass">
+      {{ description }}
+    </div>
+  </div>
+</a>

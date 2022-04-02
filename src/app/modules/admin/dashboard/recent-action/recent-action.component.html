@@ -1,0 +1,127 @@
+<div
+  class="flex flex-col flex-auto rounded min-w-0 sm:overflow-hidden bg-card dark:bg-transparent"
+>
+  <!-- Header -->
+  <div
+    class="relative flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between py-8 px-6 md:px-8 border-b"
+  >
+    <!-- Title -->
+    <div class="text-2xl font-extrabold tracking-tight">
+      Recently Changed Items
+    </div>
+    <!-- Actions -->
+    <div class="flex flex-shrink-0 items-center mt-6 sm:mt-0 sm:ml-4">
+      <!-- Search -->
+      <mat-form-field
+        class="fuse-mat-dense fuse-mat-no-subscript fuse-mat-rounded min-w-60"
+      >
+        <mat-icon
+          class="icon-size-5"
+          matPrefix
+          [svgIcon]="'heroicons_solid:search'"
+        ></mat-icon>
+        <input
+          matInput
+          [formControl]="searchInputControl"
+          [autocomplete]="'off'"
+          [placeholder]="'Search recent'"
+        />
+      </mat-form-field>
+    </div>
+  </div>
+
+  <!-- Main -->
+  <div class="relative flex flex-auto overflow-hidden">
+    <!-- Recent list -->
+    <div class="flex flex-col flex-auto overflow-hidden sm:overflow-y-auto">
+      <ng-container *ngIf="actions">
+        <ng-container *ngIf="actions.length > 0; else noActions">
+          <div class="grid">
+            <!-- Header -->
+            <div
+              class="inventory-grid z-10 sticky top-0 grid gap-4 py-4 px-6 md:px-8 shadow text-md font-semibold text-secondary bg-gray-50 dark:bg-black dark:bg-opacity-5"
+              matSort
+              matSortDisableClear
+            >
+              <div class="block">Cab</div>
+              <div class="block" [mat-sort-header]="'Description'">
+                Description
+              </div>
+              <div class="block" [mat-sort-header]="'TimeStamp'">TimeStamp</div>
+            </div>
+            <!-- Rows -->
+            <ng-container *ngIf="actions">
+              <ng-container *ngFor="let action of actions; trackBy: trackByFn">
+                <div
+                  class="inventory-grid grid items-center gap-4 py-2 px-6 md:px-8 border-b text-sm"
+                >
+                  <!-- Cabinet -->
+                  <div class="flex items-center">
+                    <app-cabinet-icon
+                      [size]="1"
+                      [cabinetClass]="action.ClassCssClass"
+                      [cabinetIcon]="action.ClassIcon"
+                    ></app-cabinet-icon>
+                  </div>
+
+                  <!-- Description -->
+                  <div class="flex flex-auto items-center">
+                    <a
+                      class="hover:underline"
+                      [routerLink]="'/admin/thinq/' + action.AppDataId"
+                    >
+                      {{ action.Abstract }}
+                    </a>
+                    <button
+                      mat-icon-button
+                      (click)="downloadDocument(action.AppDataId)"
+                      *ngIf="action.ClassName === 'Document'"
+                    >
+                      <mat-icon
+                        [svgIcon]="'heroicons_outline:download'"
+                      ></mat-icon>
+                    </button>
+                    <button
+                      mat-icon-button
+                      [routerLink]="[
+                        '/admin/document/view/' + action.AppDataId
+                      ]"
+                      *ngIf="action.ClassName === 'Document'"
+                    >
+                      <mat-icon [svgIcon]="'heroicons_outline:eye'"></mat-icon>
+                    </button>
+                  </div>
+
+                  <!-- TimeStamp -->
+                  <div class="flex flex-auto items-center">
+                    <span>
+                      {{ action.TimeStamp }}
+                    </span>
+                  </div>
+                </div>
+              </ng-container>
+            </ng-container>
+          </div>
+
+          <mat-paginator
+            class="border-b sm:border-t sm:border-b-0 z-10 bg-gray-50 dark:bg-transparent"
+            [ngClass]="{ 'pointer-events-none': isLoading$ | async }"
+            [length]="pagination.length"
+            [pageIndex]="pagination.page"
+            [pageSize]="pagination.size"
+            [pageSizeOptions]="[5, 10, 25, 100]"
+            [showFirstLastButtons]="true"
+          ></mat-paginator>
+        </ng-container>
+      </ng-container>
+
+      <ng-template #noActions>
+        <div
+          class="p-8 sm:p-16 border-t text-4xl font-semibold tracking-tight text-center"
+        >
+          There is no recent changes!
+        </div>
+      </ng-template>
+    </div>
+  </div>
+</div>

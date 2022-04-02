@@ -1,0 +1,56 @@
+<!-- Total Information  -->
+<div
+  class="grid grid-rows-3 items-center w-full h-full bg-blue-400 text-white rounded-lg shadow"
+>
+  <div class="row-span-1 flex w-full items-center">
+    <span class="flex w-1/3 justify-end">
+      <mat-icon
+        [inline]="true"
+        class="text-white w-10 h-10"
+        svgIcon="heroicons_outline:users"
+      ></mat-icon>
+    </span>
+    <div class="w-2/3 flex flex-col p-2">
+      <span class="text-3xl font-medium tracking-tight leading-6 truncate">
+        {{ customerCount }}
+      </span>
+      <span class="text-xl font-medium tracking-tight leading-6 truncate">
+        Total Customer
+      </span>
+    </div>
+  </div>
+  <div class="row-span-1 flex w-full items-center">
+    <span class="flex w-1/3 justify-end">
+      <mat-icon
+        [inline]="true"
+        class="text-white w-10 h-10"
+        svgIcon="heroicons_outline:chart-bar"
+      ></mat-icon>
+    </span>
+    <div class="w-2/3 flex flex-col p-2">
+      <span class="text-3xl font-medium tracking-tight leading-6 truncate">
+        {{ opportunityCount }}
+      </span>
+      <span class="text-xl font-medium tracking-tight leading-6 truncate">
+        Total Opportunity
+      </span>
+    </div>
+  </div>
+  <div class="row-span-1 flex w-full items-center">
+    <span class="flex w-1/3 justify-end">
+      <mat-icon
+        [inline]="true"
+        class="text-white w-10 h-10"
+        svgIcon="heroicons_outline:currency-dollar"
+      ></mat-icon>
+    </span>
+    <div class="w-2/3 flex flex-col p-2">
+      <span class="text-3xl font-medium tracking-tight leading-6 truncate">
+        {{ totalRevenue | shortNumber }}
+      </span>
+      <span class="text-xl font-medium tracking-tight leading-6 truncate">
+        Total Revenue
+      </span>
+    </div>
+  </div>
+</div>

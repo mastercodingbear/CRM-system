@@ -1,0 +1,87 @@
+<!-- Loading bar -->
+<fuse-loading-bar></fuse-loading-bar>
+
+<!-- Navigation -->
+<fuse-vertical-navigation
+  class="dark bg-gray-900 print:hidden"
+  [mode]="isScreenSmall ? 'over' : 'side'"
+  [name]="'mainNavigation'"
+  [navigation]="navigation"
+  [opened]="!isScreenSmall"
+>
+  <!-- Navigation header hook -->
+  <ng-container fuseVerticalNavigationContentHeader>
+    <div class="flex items-center w-full p-4 pl-6">
+      <!-- Logo -->
+      <a class="flex items-center justify-center" [routerLink]="'/'">
+        <img class="w-8" src="assets/images/logo/kqlogo.png" />
+      </a>
+      <!-- Components -->
+      <div class="flex items-center ml-auto">
+        <user [showAvatar]="false"></user>
+      </div>
+    </div>
+    <!-- User -->
+    <div class="flex flex-col items-center w-full p-4">
+      <div class="relative w-24 h-24">
+        <mat-icon
+          class="icon-size-24"
+          [svgIcon]="'heroicons_solid:user-circle'"
+        ></mat-icon>
+      </div>
+      <div class="flex flex-col items-center justify-center w-full mt-6">
+        <div
+          class="w-full whitespace-nowrap text-ellipsis overflow-hidden text-center leading-normal font-medium"
+        >
+          {{ user.fullname }}
+        </div>
+        <div
+          class="w-full mt-0.5 whitespace-nowrap text-ellipsis overflow-hidden text-center text-md leading-normal font-medium text-secondary"
+        >
+          {{ user.username }}
+        </div>
+      </div>
+    </div>
+  </ng-container>
+</fuse-vertical-navigation>
+
+<!-- Wrapper -->
+<div class="flex flex-col flex-auto w-full min-w-0 h-screen">
+  <!-- Header -->
+  <div
+    class="sticky flex flex-0 items-center w-full h-16 px-4 md:px-6 z-49 shadow dark:shadow-none dark:border-b bg-card dark:bg-transparent print:hidden"
+  >
+    <!-- Navigation toggle button -->
+    <button mat-icon-button (click)="toggleNavigation('mainNavigation')">
+      <mat-icon [svgIcon]="'heroicons_outline:menu'"></mat-icon>
+    </button>
+    <!-- Components -->
+    <div class="flex items-center pl-2 ml-auto space-x-0.5 sm:space-x-2">
+      <fuse-fullscreen class="hidden md:block"></fuse-fullscreen>
+      <search [appearance]="'bar'"></search>
+      <timesheet (clickEvent)="matDrawer.toggle()"></timesheet>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="flex flex-col flex-auto w-full h-screen overflow-auto">
+    <mat-drawer-container
+      class="flex-auto h-screen bg-card dark:bg-transparent"
+      (backdropClick)="onBackdropClicked()"
+    >
+      <mat-drawer
+        class="w-full sm:w-160 dark:bg-gray-900"
+        [mode]="drawerMode"
+        [opened]="false"
+        [position]="'end'"
+        [disableClose]="true"
+        #matDrawer
+      >
+        <app-timesheet></app-timesheet>
+      </mat-drawer>
+      <mat-drawer-content class="flex h-full">
+        <router-outlet></router-outlet>
+      </mat-drawer-content>
+    </mat-drawer-container>
+  </div>
+</div>

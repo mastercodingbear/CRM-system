@@ -1,0 +1,32 @@
+<!-- Button -->
+<button mat-icon-button [matMenuTriggerFor]="userActions">
+  <span class="relative">
+    <mat-icon
+      *ngIf="!showAvatar"
+      [svgIcon]="'heroicons_outline:user-circle'"
+    ></mat-icon>
+  </span>
+</button>
+
+<mat-menu [xPosition]="'before'" #userActions="matMenu">
+  <button mat-menu-item>
+    <span class="flex flex-col leading-none">
+      <span>Signed in as</span>
+      <span class="mt-1.5 text-md font-medium">{{ user.username }}</span>
+    </span>
+  </button>
+  <mat-divider class="my-2"></mat-divider>
+  <button mat-menu-item>
+    <mat-icon [svgIcon]="'heroicons_outline:user-circle'"></mat-icon>
+    <span>Profile</span>
+  </button>
+  <button mat-menu-item>
+    <mat-icon [svgIcon]="'heroicons_outline:cog'"></mat-icon>
+    <span>Settings</span>
+  </button>
+  <mat-divider class="my-2"></mat-divider>
+  <button mat-menu-item (click)="signOut()">
+    <mat-icon [svgIcon]="'heroicons_outline:logout'"></mat-icon>
+    <span>Sign out</span>
+  </button>
+</mat-menu>

@@ -1,0 +1,224 @@
+<div class="flex flex-col rounded min-w-0 bg-card dark:bg-transparent">
+  <!-- Header -->
+  <div
+    class="relative flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between border-b"
+  >
+    <!-- Cabinet Header -->
+    <ng-container *ngIf="thinqList">
+      <app-cabinet-header
+        *ngIf="headerClass"
+        [title]="cabinet"
+        [subTitle]="pagination.length + ' results'"
+        [headerIcon]="headerClass.Icon"
+        [headerClass]="headerClass.CssClass"
+      ></app-cabinet-header>
+    </ng-container>
+  </div>
+
+  <!-- Main -->
+  <div
+    class="relative flex flex-col flex-auto overflow-hidden w-full rounded"
+    *ngIf="thinqList"
+  >
+    <div
+      class="absolute backdrop-filter inset-0 backdrop-blur-sm z-20"
+      *ngIf="isLoading$ | async"
+    ></div>
+    <!-- Column visiblity menu -->
+    <div class="flex justify-end mr-2">
+      <button
+        mat-icon-button
+        [matMenuTriggerFor]="menu"
+        aria-label="Example icon-button with a menu"
+      >
+        <mat-icon
+          class="icon-size-5"
+          matPrefix
+          [svgIcon]="'heroicons_solid:dots-vertical'"
+        ></mat-icon>
+      </button>
+      <mat-menu #menu="matMenu" class="max-h-80">
+        <button mat-menu-item *ngFor="let col of displayColumns">
+          <mat-checkbox [(ngModel)]="visibleColumns[col]">
+            {{ col }}
+          </mat-checkbox>
+        </button>
+      </mat-menu>
+    </div>
+    <!-- Thinq List Data Table -->
+    <div class="w-full overflow-auto">
+      <table
+        mat-table
+        [dataSource]="thinqList"
+        class="admin-table max-h-screen"
+      >
+        <!-- Column -->
+        <ng-container
+          *ngFor="let col of displayColumns"
+          [matColumnDef]="col"
+          [sticky]="col === 'View'"
+        >
+          <ng-container *ngIf="visibleColumns[col] === true">
+            <th
+              mat-header-cell
+              *matHeaderCellDef
+              [ngStyle]="{
+                'min-width': widthColumns[col] + 'px',
+                'max-width': widthColumns[col] + 'px'
+              }"
+            >
+              <div
+                class="group flex px-2 py-0 justify-between w-full border-b-1"
+              >
+                <ng-container *ngIf="col !== 'View'; else viewColTemplate">
+                  <ng-container
+                    *ngIf="!searchColVisible[col]; else searchColumnTemplate"
+                  >
+                    <span
+                      matSort
+                      (matSortChange)="sortCol($event)"
+                      [mat-sort-header]="col"
+                      class="flex items-center text-md"
+                    >
+                      {{ col }}
+                    </span>
+                  </ng-container>
+                  <ng-template #searchColumnTemplate>
+                    <mat-form-field
+                      class="fuse-mat-dense appearance-none fuse-mat-no-subscript min-w-22"
+                    >
+                      <input
+                        matInput
+                        [placeholder]="'Search...'"
+                        [formControl]="getSearchControl(col)"
+                        [autocomplete]="'off'"
+                      />
+                    </mat-form-field>
+                    <button
+                      [ngClass]="isSearchCol(col) ? 'opacity-0' : 'opacity-100'"
+                      class="ml-2 transition duration-150 ease-in-out flex items-center"
+                      [disabled]="isSearchCol(col)"
+                      [matMenuTriggerFor]="menu"
+                      mat-icon-button
+                    >
+                      <mat-icon [svgIcon]="'mat_solid:filter_alt'"></mat-icon>
+                    </button>
+                    <mat-menu #menu="matMenu">
+                      <button
+                        *ngFor="let operator of searchColumnOperators"
+                        mat-menu-item
+                        [ngClass]="{
+                          'text-blue-600':
+                            searchOperator[col] !== undefined &&
+                            searchOperator[col] === operator.value
+                        }"
+                        (click)="onSearchOption(col, operator.value)"
+                      >
+                        {{ operator.label }}
+                      </button>
+                    </mat-menu>
+                  </ng-template>
+                  <button
+                    class="opacity-0 transition duration-150 ease-in-out flex items-center group-hover:opacity-100"
+                    (click)="searchColVisible[col] = !searchColVisible[col]"
+                    mat-icon-button
+                  >
+                    <mat-icon [svgIcon]="'heroicons_solid:search'"></mat-icon>
+                  </button>
+                </ng-container>
+                <ng-template #viewColTemplate>
+                  <span class="flex items-center text-sm">
+                    {{ col }}
+                  </span>
+                </ng-template>
+              </div>
+            </th>
+            <td
+              mat-cell
+              *matCellDef="let row"
+              [ngStyle]="{
+                'min-width': widthColumns[col] + 'px',
+                'max-width': widthColumns[col] + 'px'
+              }"
+              [ngClass]="{ 'bg-gray-100': col === 'View' }"
+            >
+              <ng-container *ngIf="col !== 'View'; else actionTemplate">
+                <!-- Edit Cell Mode -->
+                <ng-container
+                  *ngIf="
+                    selectedCell &&
+                      selectedCell.appDataId === row['AppDataId'] &&
+                      selectedCell.fieldName === col;
+                    else viewTemplate
+                  "
+                >
+                  <thinq-form-field
+                    [control]="selectedCellFormControl"
+                    [arrField]="selectedCellArrField"
+                    [txlIdField]="selectedCellTxlControl"
+                    [labelVisibility]="false"
+                  >
+                  </thinq-form-field>
+                </ng-container>
+                <!-- View Cell Mode -->
+                <ng-template #viewTemplate>
+                  <div class="px-2 text-sm" (dblclick)="setEditMode(row, col)">
+                    {{ row[col] }}
+                  </div>
+                </ng-template>
+              </ng-container>
+              <!-- Action Template: View Thinq -->
+              <ng-template #actionTemplate>
+                <button
+                  color="primary"
+                  mat-icon-button
+                  (click)="onOpenThinq(row['AppDataId'])"
+                >
+                  <mat-icon [svgIcon]="'mat_solid:visibility'"></mat-icon>
+                </button>
+                <button
+                  color="primary"
+                  mat-icon-button
+                  (click)="onUpdateField()"
+                  *ngIf="
+                    selectedCell && row['AppDataId'] === selectedCell.appDataId
+                  "
+                >
+                  <mat-icon [svgIcon]="'mat_solid:save'"></mat-icon>
+                </button>
+              </ng-template>
+            </td>
+          </ng-container>
+        </ng-container>
+
+        <tr
+          mat-header-row
+          class="sticky top-0 z-10 bg-gray-200"
+          *matHeaderRowDef="filterColumn()"
+        ></tr>
+        <tr
+          mat-row
+          *matRowDef="
+            let row;
+            columns: filterColumn()
+              | paginate
+                : {
+                    id: 'server',
+                    itemsPerPage: pagination.size,
+                    currentPage: pagination.page,
+                    totalItems: pagination.length
+                  }
+          "
+          class="datatable-row max-h-8"
+        ></tr>
+      </table>
+    </div>
+
+    <app-footer
+      [pagination]="pagination"
+      [paginationConfig]="paginationConfig"
+      (paginationChanged)="paginationChanged($event)"
+    >
+    </app-footer>
+  </div>
+</div>
